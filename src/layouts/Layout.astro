@@ -1,0 +1,22 @@
+---
+interface Props {
+  title?: string;
+}
+
+const { title = "Floor Power — Electricity Bill Splitter" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="description" content="Apple-grade electricity bill splitter for multi-floor residences. Accurate sub-meter apportioning." />
+    <link rel="stylesheet" href="/src/styles/global.css" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

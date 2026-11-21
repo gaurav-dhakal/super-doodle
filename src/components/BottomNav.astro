@@ -1,0 +1,30 @@
+---
+// BottomNav.astro - Fixed iOS-style tab bar with Electricity, Water, History
+---
+
+<nav class="bottom-nav" aria-label="Bottom Navigation">
+  <button class="nav-tab-btn active" data-tab="electricity" id="tabBtnElectricity" type="button">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+    </svg>
+    <span class="nav-tab-label">Electricity</span>
+  </button>
+
+  <button class="nav-tab-btn" data-tab="water" id="tabBtnWater" type="button">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+    </svg>
+    <span class="nav-tab-label">Water</span>
+  </button>
+
+  <button class="nav-tab-btn" data-tab="history" id="tabBtnHistory" type="button">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <line x1="16" y1="13" x2="8" y2="13"></line>
+      <line x1="16" y1="17" x2="8" y2="17"></line>
+      <polyline points="10 9 9 9 8 9"></polyline>
+    </svg>
+    <span class="nav-tab-label">History</span>
+  </button>
+</nav>

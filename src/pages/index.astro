@@ -1,0 +1,809 @@
+---
+import Layout from '../layouts/Layout.astro';
+import BottomNav from '../components/BottomNav.astro';
+---
+
+<Layout title="Floor Bill Splitter (NPR)">
+  <div class="mobile-app">
+    <!-- Clean Minimalist Header -->
+    <header class="app-header">
+      <div class="header-title-wrap">
+        <h1 id="pageTitle">Electricity</h1>
+        <span class="header-subtitle">3 Floors · Currency: NPR (Rs.)</span>
+      </div>
+      <button id="resetAllBtn" class="header-action-btn" type="button" title="Clear current inputs">
+        Reset
+      </button>
+    </header>
+
+    <!-- Main Content Tab Panels -->
+    <main class="app-content">
+      
+      <!-- ================= TAB 1: ELECTRICITY ================= -->
+      <section class="tab-panel active" id="tab-electricity">
+        <!-- Master Bill Amount Card -->
+        <div class="card">
+          <label for="elecBillInput" class="input-label">Total Electricity Bill</label>
+          <p class="input-sub">Enter the total bill amount from the main utility meter</p>
+          <div class="currency-input-wrap">
+            <span class="currency-prefix">Rs.</span>
+            <input 
+              type="number" 
+              id="elecBillInput" 
+              class="currency-input" 
+              placeholder="0" 
+              min="0" 
+              step="any"
+              inputmode="decimal"
+            />
+          </div>
+          <input 
+            type="text" 
+            id="elecMonthInput" 
+            class="month-input" 
+            placeholder="Billing Month (e.g. Kartik / Mangsir)" 
+          />
+        </div>
+
+        <!-- 3 Floor Sub-Meter Cards -->
+        <!-- Ground Floor -->
+        <div class="floor-item-card">
+          <div class="floor-item-header">
+            <div class="floor-badge-row">
+              <span class="floor-icon ground-icon">G</span>
+              <span class="floor-title-main">Ground Floor</span>
+            </div>
+            <div class="used-badge">
+              <span id="elecUsedGround">0</span> units
+            </div>
+          </div>
+          <div class="readings-row">
+            <div class="reading-field">
+              <label for="elecPrevGround">Prev Reading</label>
+              <input type="number" id="elecPrevGround" class="reading-input-box" placeholder="0" min="0" step="any" inputmode="decimal" />
+            </div>
+            <div class="reading-field">
+              <label for="elecCurrGround">Current Reading</label>
+              <input type="number" id="elecCurrGround" class="reading-input-box" placeholder="0" min="0" step="any" inputmode="decimal" />
+            </div>
+          </div>
+          <p class="reading-warning hidden" id="errorElecGround">Current reading must be ≥ previous</p>
+        </div>
+
+        <!-- 1st Floor -->
+        <div class="floor-item-card">
+          <div class="floor-item-header">
+            <div class="floor-badge-row">
+              <span class="floor-icon first-icon">1</span>
+              <span class="floor-title-main">1st Floor</span>
+            </div>
+            <div class="used-badge">
+              <span id="elecUsedFirst">0</span> units
+            </div>
+          </div>
+          <div class="readings-row">
+            <div class="reading-field">
+              <label for="elecPrevFirst">Prev Reading</label>
+              <input type="number" id="elecPrevFirst" class="reading-input-box" placeholder="0" min="0" step="any" inputmode="decimal" />
+            </div>
+            <div class="reading-field">
+              <label for="elecCurrFirst">Current Reading</label>
+              <input type="number" id="elecCurrFirst" class="reading-input-box" placeholder="0" min="0" step="any" inputmode="decimal" />
+            </div>
+          </div>
+          <p class="reading-warning hidden" id="errorElecFirst">Current reading must be ≥ previous</p>
+        </div>
+
+        <!-- Top Floor -->
+        <div class="floor-item-card">
+          <div class="floor-item-header">
+            <div class="floor-badge-row">
+              <span class="floor-icon top-icon">T</span>
+              <span class="floor-title-main">Top Floor</span>
+            </div>
+            <div class="used-badge">
+              <span id="elecUsedTop">0</span> units
+            </div>
+          </div>
+          <div class="readings-row">
+            <div class="reading-field">
+              <label for="elecPrevTop">Prev Reading</label>
+              <input type="number" id="elecPrevTop" class="reading-input-box" placeholder="0" min="0" step="any" inputmode="decimal" />
+            </div>
+            <div class="reading-field">
+              <label for="elecCurrTop">Current Reading</label>
+              <input type="number" id="elecCurrTop" class="reading-input-box" placeholder="0" min="0" step="any" inputmode="decimal" />
+            </div>
+          </div>
+          <p class="reading-warning hidden" id="errorElecTop">Current reading must be ≥ previous</p>
+        </div>
+
+        <!-- Electricity Live Breakdown Card -->
+        <div class="results-card">
+          <div class="card-title">Electricity Calculation</div>
+          
+          <div class="kpi-row">
+            <div class="kpi-box">
+              <div class="kpi-title">Total Units</div>
+              <div class="kpi-value"><span id="elecTotalUnits">0</span> kWh</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-title">Rate / Unit</div>
+              <div class="kpi-value">Rs. <span id="elecCostPerUnit">0.00</span></div>
+            </div>
+          </div>
+
+          <div class="floor-result-list">
+            <div class="floor-share-row">
+              <div>
+                <div class="share-name">Ground Floor</div>
+                <div class="share-units-sub"><span id="subUnitsGround">0</span> units (<span id="subPctGround">0%</span>)</div>
+              </div>
+              <div class="share-amount-box">
+                <div class="share-amount">Rs. <span id="shareElecGround">0.00</span></div>
+              </div>
+            </div>
+
+            <div class="floor-share-row">
+              <div>
+                <div class="share-name">1st Floor</div>
+                <div class="share-units-sub"><span id="subUnitsFirst">0</span> units (<span id="subPctFirst">0%</span>)</div>
+              </div>
+              <div class="share-amount-box">
+                <div class="share-amount">Rs. <span id="shareElecFirst">0.00</span></div>
+              </div>
+            </div>
+
+            <div class="floor-share-row">
+              <div>
+                <div class="share-name">Top Floor</div>
+                <div class="share-units-sub"><span id="subUnitsTop">0</span> units (<span id="subPctTop">0%</span>)</div>
+              </div>
+              <div class="share-amount-box">
+                <div class="share-amount">Rs. <span id="shareElecTop">0.00</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <button id="copyElecBtn" class="btn-primary" type="button">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Copy for WhatsApp
+          </button>
+          <button id="saveElecBtn" class="btn-secondary" type="button">
+            Save to History
+          </button>
+        </div>
+      </section>
+
+      <!-- ================= TAB 2: WATER ================= -->
+      <section class="tab-panel" id="tab-water">
+        <!-- Master Water Bill Card -->
+        <div class="card">
+          <label for="waterBillInput" class="input-label">Total Water Bill</label>
+          <p class="input-sub">Enter the total water bill amount to divide equally by 3</p>
+          <div class="currency-input-wrap">
+            <span class="currency-prefix">Rs.</span>
+            <input 
+              type="number" 
+              id="waterBillInput" 
+              class="currency-input" 
+              placeholder="0" 
+              min="0" 
+              step="any"
+              inputmode="decimal"
+            />
+          </div>
+          <input 
+            type="text" 
+            id="waterMonthInput" 
+            class="month-input" 
+            placeholder="Billing Month (e.g. Kartik / Mangsir)" 
+          />
+        </div>
+
+        <!-- Water Equal 3-Way Split Card -->
+        <div class="results-card">
+          <div class="card-title">Equal 3-Way Split</div>
+
+          <div class="kpi-row">
+            <div class="kpi-box">
+              <div class="kpi-title">Total Water Bill</div>
+              <div class="kpi-value">Rs. <span id="waterTotalDisplay">0.00</span></div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-title">Share Per Person</div>
+              <div class="kpi-value">Rs. <span id="waterPerPerson">0.00</span></div>
+            </div>
+          </div>
+
+          <div class="floor-result-list">
+            <div class="floor-share-row">
+              <div>
+                <div class="share-name">Ground Floor</div>
+                <div class="share-units-sub">1 of 3 equal shares</div>
+              </div>
+              <div class="share-amount-box">
+                <div class="share-amount">Rs. <span id="shareWaterGround">0.00</span></div>
+              </div>
+            </div>
+
+            <div class="floor-share-row">
+              <div>
+                <div class="share-name">1st Floor</div>
+                <div class="share-units-sub">1 of 3 equal shares</div>
+              </div>
+              <div class="share-amount-box">
+                <div class="share-amount">Rs. <span id="shareWaterFirst">0.00</span></div>
+              </div>
+            </div>
+
+            <div class="floor-share-row">
+              <div>
+                <div class="share-name">Top Floor</div>
+                <div class="share-units-sub">1 of 3 equal shares</div>
+              </div>
+              <div class="share-amount-box">
+                <div class="share-amount">Rs. <span id="shareWaterTop">0.00</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Combined Total Section (Electricity + Water) -->
+          <div style="margin-top: 14px; padding-top: 14px; border-top: 0.5px solid var(--color-border);">
+            <div class="card-title" style="margin-bottom: 8px;">Total Combined (Electricity + Water)</div>
+            
+            <div class="floor-result-list">
+              <div class="floor-share-row">
+                <div class="share-name">Ground Floor Total</div>
+                <div class="share-amount">Rs. <span id="combinedGround">0.00</span></div>
+              </div>
+              <div class="floor-share-row">
+                <div class="share-name">1st Floor Total</div>
+                <div class="share-amount">Rs. <span id="combinedFirst">0.00</span></div>
+              </div>
+              <div class="floor-share-row">
+                <div class="share-name">Top Floor Total</div>
+                <div class="share-amount">Rs. <span id="combinedTop">0.00</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <button id="copyWaterBtn" class="btn-primary" type="button" style="margin-top: 14px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Copy for WhatsApp
+          </button>
+          <button id="saveWaterBtn" class="btn-secondary" type="button">
+            Save to History
+          </button>
+        </div>
+      </section>
+
+      <!-- ================= TAB 3: HISTORY ================= -->
+      <section class="tab-panel" id="tab-history">
+        <div class="card" style="padding: 14px 18px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div class="card-title" style="margin: 0;">Saved Records</div>
+            <span class="input-sub" style="margin: 0;">Saved on this device</span>
+          </div>
+          <button id="clearHistoryBtn" class="header-action-btn" type="button" style="color: var(--color-danger);">
+            Clear All
+          </button>
+        </div>
+
+        <div id="historyListContainer">
+          <!-- Populated by JavaScript -->
+          <div class="history-empty" id="historyEmpty">
+            <div class="history-empty-icon">📋</div>
+            <p>No saved records yet.</p>
+            <p class="input-sub">Tap "Save to History" in Electricity or Water after calculating.</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Navigation Bar (Electricity, Water, History) -->
+    <BottomNav />
+
+    <!-- Toast Notification -->
+    <div id="mobileToast" class="mobile-toast hidden" role="status">
+      <span id="toastText">Copied!</span>
+    </div>
+  </div>
+</Layout>
+
+<!-- Client Reactivity Script -->
+<script>
+  interface HistoryEntry {
+    id: string;
+    type: 'Electricity' | 'Water' | 'Combined';
+    month: string;
+    date: string;
+    ground: number;
+    first: number;
+    top: number;
+    total: number;
+    rate?: number;
+    totalUnits?: number;
+  }
+
+  const formatRs = (num: number, decimals = 2) => {
+    return Number(num).toLocaleString('en-US', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals
+    });
+  };
+
+  const showToast = (text: string) => {
+    const toast = document.getElementById('mobileToast');
+    const toastText = document.getElementById('toastText');
+    if (toast && toastText) {
+      toastText.textContent = text;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 2200);
+    }
+  };
+
+  const copyToClipboard = (text: string, successMsg = 'Copied for WhatsApp!') => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text)
+        .then(() => showToast(successMsg))
+        .catch(() => fallbackCopy(text, successMsg));
+    } else {
+      fallbackCopy(text, successMsg);
+    }
+  };
+
+  const fallbackCopy = (text: string, successMsg: string) => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      showToast(successMsg);
+    } catch (e) {
+      showToast('Could not copy');
+    }
+    document.body.removeChild(ta);
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // --- Tabs Switching ---
+    const tabBtns = document.querySelectorAll('.nav-tab-btn');
+    const panels = document.querySelectorAll('.tab-panel');
+    const pageTitle = document.getElementById('pageTitle');
+
+    const switchTab = (tabId: string) => {
+      tabBtns.forEach((btn) => {
+        btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
+      });
+      panels.forEach((p) => {
+        p.classList.toggle('active', p.id === `tab-${tabId}`);
+      });
+      if (pageTitle) {
+        if (tabId === 'electricity') pageTitle.textContent = 'Electricity';
+        else if (tabId === 'water') pageTitle.textContent = 'Water';
+        else if (tabId === 'history') {
+          pageTitle.textContent = 'History';
+          renderHistory();
+        }
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    tabBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const tab = btn.getAttribute('data-tab') || 'electricity';
+        switchTab(tab);
+      });
+    });
+
+    // --- Electricity Elements ---
+    const elecBillInput = document.getElementById('elecBillInput') as HTMLInputElement;
+    const elecMonthInput = document.getElementById('elecMonthInput') as HTMLInputElement;
+
+    const elecPrevGround = document.getElementById('elecPrevGround') as HTMLInputElement;
+    const elecCurrGround = document.getElementById('elecCurrGround') as HTMLInputElement;
+    const elecUsedGround = document.getElementById('elecUsedGround') as HTMLElement;
+    const errorElecGround = document.getElementById('errorElecGround') as HTMLElement;
+
+    const elecPrevFirst = document.getElementById('elecPrevFirst') as HTMLInputElement;
+    const elecCurrFirst = document.getElementById('elecCurrFirst') as HTMLInputElement;
+    const elecUsedFirst = document.getElementById('elecUsedFirst') as HTMLElement;
+    const errorElecFirst = document.getElementById('errorElecFirst') as HTMLElement;
+
+    const elecPrevTop = document.getElementById('elecPrevTop') as HTMLInputElement;
+    const elecCurrTop = document.getElementById('elecCurrTop') as HTMLInputElement;
+    const elecUsedTop = document.getElementById('elecUsedTop') as HTMLElement;
+    const errorElecTop = document.getElementById('errorElecTop') as HTMLElement;
+
+    const elecTotalUnits = document.getElementById('elecTotalUnits') as HTMLElement;
+    const elecCostPerUnit = document.getElementById('elecCostPerUnit') as HTMLElement;
+
+    const subUnitsGround = document.getElementById('subUnitsGround') as HTMLElement;
+    const subPctGround = document.getElementById('subPctGround') as HTMLElement;
+    const shareElecGround = document.getElementById('shareElecGround') as HTMLElement;
+
+    const subUnitsFirst = document.getElementById('subUnitsFirst') as HTMLElement;
+    const subPctFirst = document.getElementById('subPctFirst') as HTMLElement;
+    const shareElecFirst = document.getElementById('shareElecFirst') as HTMLElement;
+
+    const subUnitsTop = document.getElementById('subUnitsTop') as HTMLElement;
+    const subPctTop = document.getElementById('subPctTop') as HTMLElement;
+    const shareElecTop = document.getElementById('shareElecTop') as HTMLElement;
+
+    // --- Water Elements ---
+    const waterBillInput = document.getElementById('waterBillInput') as HTMLInputElement;
+    const waterMonthInput = document.getElementById('waterMonthInput') as HTMLInputElement;
+
+    const waterTotalDisplay = document.getElementById('waterTotalDisplay') as HTMLElement;
+    const waterPerPerson = document.getElementById('waterPerPerson') as HTMLElement;
+    const shareWaterGround = document.getElementById('shareWaterGround') as HTMLElement;
+    const shareWaterFirst = document.getElementById('shareWaterFirst') as HTMLElement;
+    const shareWaterTop = document.getElementById('shareWaterTop') as HTMLElement;
+
+    const combinedGround = document.getElementById('combinedGround') as HTMLElement;
+    const combinedFirst = document.getElementById('combinedFirst') as HTMLElement;
+    const combinedTop = document.getElementById('combinedTop') as HTMLElement;
+
+    // State cache
+    let currentElecShares = { ground: 0, first: 0, top: 0, totalUnits: 0, costPerUnit: 0, totalBill: 0 };
+    let currentWaterShares = { ground: 0, first: 0, top: 0, totalBill: 0 };
+
+    // --- Electricity Calculator Logic ---
+    const calculateElectricity = () => {
+      const totalBill = parseFloat(elecBillInput.value || '0') || 0;
+
+      // Ground Floor
+      const prevG = parseFloat(elecPrevGround.value || '0') || 0;
+      const currG = parseFloat(elecCurrGround.value || '0') || 0;
+      const hasG = elecPrevGround.value !== '' || elecCurrGround.value !== '';
+      let usedG = 0;
+      if (hasG && currG < prevG) {
+        errorElecGround.classList.remove('hidden');
+      } else {
+        errorElecGround.classList.add('hidden');
+        usedG = hasG ? Math.max(0, currG - prevG) : 0;
+      }
+      elecUsedGround.textContent = formatRs(usedG, 1);
+      subUnitsGround.textContent = formatRs(usedG, 1);
+
+      // 1st Floor
+      const prev1 = parseFloat(elecPrevFirst.value || '0') || 0;
+      const curr1 = parseFloat(elecCurrFirst.value || '0') || 0;
+      const has1 = elecPrevFirst.value !== '' || elecCurrFirst.value !== '';
+      let used1 = 0;
+      if (has1 && curr1 < prev1) {
+        errorElecFirst.classList.remove('hidden');
+      } else {
+        errorElecFirst.classList.add('hidden');
+        used1 = has1 ? Math.max(0, curr1 - prev1) : 0;
+      }
+      elecUsedFirst.textContent = formatRs(used1, 1);
+      subUnitsFirst.textContent = formatRs(used1, 1);
+
+      // Top Floor
+      const prevT = parseFloat(elecPrevTop.value || '0') || 0;
+      const currT = parseFloat(elecCurrTop.value || '0') || 0;
+      const hasT = elecPrevTop.value !== '' || elecCurrTop.value !== '';
+      let usedT = 0;
+      if (hasT && currT < prevT) {
+        errorElecTop.classList.remove('hidden');
+      } else {
+        errorElecTop.classList.add('hidden');
+        usedT = hasT ? Math.max(0, currT - prevT) : 0;
+      }
+      elecUsedTop.textContent = formatRs(usedT, 1);
+      subUnitsTop.textContent = formatRs(usedT, 1);
+
+      // Step 2: Sum the used units of all three floors
+      const totalUnits = usedG + used1 + usedT;
+      elecTotalUnits.textContent = formatRs(totalUnits, 1);
+
+      // Step 3: Determine Cost Per Unit
+      let costPerUnit = 0;
+      if (totalUnits > 0 && totalBill > 0) {
+        costPerUnit = totalBill / totalUnits;
+      }
+      elecCostPerUnit.textContent = formatRs(costPerUnit, 2);
+
+      // Step 4: Calculate each user's share
+      const shareG = usedG * costPerUnit;
+      const share1 = used1 * costPerUnit;
+      const shareT = usedT * costPerUnit;
+
+      shareElecGround.textContent = formatRs(shareG, 2);
+      shareElecFirst.textContent = formatRs(share1, 2);
+      shareElecTop.textContent = formatRs(shareT, 2);
+
+      subPctGround.textContent = totalUnits > 0 ? `${formatRs((usedG / totalUnits) * 100, 1)}%` : '0%';
+      subPctFirst.textContent = totalUnits > 0 ? `${formatRs((used1 / totalUnits) * 100, 1)}%` : '0%';
+      subPctTop.textContent = totalUnits > 0 ? `${formatRs((usedT / totalUnits) * 100, 1)}%` : '0%';
+
+      currentElecShares = {
+        ground: shareG,
+        first: share1,
+        top: shareT,
+        totalUnits,
+        costPerUnit,
+        totalBill
+      };
+
+      updateCombined();
+    };
+
+    // --- Water Calculator Logic (Divide Exactly in 3) ---
+    const calculateWater = () => {
+      const totalWater = parseFloat(waterBillInput.value || '0') || 0;
+      const sharePerFloor = totalWater > 0 ? totalWater / 3 : 0;
+
+      waterTotalDisplay.textContent = formatRs(totalWater, 2);
+      waterPerPerson.textContent = formatRs(sharePerFloor, 2);
+
+      shareWaterGround.textContent = formatRs(sharePerFloor, 2);
+      shareWaterFirst.textContent = formatRs(sharePerFloor, 2);
+      shareWaterTop.textContent = formatRs(sharePerFloor, 2);
+
+      currentWaterShares = {
+        ground: sharePerFloor,
+        first: sharePerFloor,
+        top: sharePerFloor,
+        totalBill: totalWater
+      };
+
+      updateCombined();
+    };
+
+    const updateCombined = () => {
+      const combG = currentElecShares.ground + currentWaterShares.ground;
+      const comb1 = currentElecShares.first + currentWaterShares.first;
+      const combT = currentElecShares.top + currentWaterShares.top;
+
+      combinedGround.textContent = formatRs(combG, 2);
+      combinedFirst.textContent = formatRs(comb1, 2);
+      combinedTop.textContent = formatRs(combT, 2);
+    };
+
+    // Listeners for Electricity
+    [elecBillInput, elecPrevGround, elecCurrGround, elecPrevFirst, elecCurrFirst, elecPrevTop, elecCurrTop].forEach((input) => {
+      input.addEventListener('input', calculateElectricity);
+    });
+
+    // Listeners for Water
+    waterBillInput.addEventListener('input', calculateWater);
+
+    // Sync months if user enters in one
+    elecMonthInput.addEventListener('input', () => {
+      if (!waterMonthInput.value) waterMonthInput.value = elecMonthInput.value;
+    });
+
+    // Reset button in header
+    document.getElementById('resetAllBtn')?.addEventListener('click', () => {
+      elecBillInput.value = '';
+      elecMonthInput.value = '';
+      elecPrevGround.value = '';
+      elecCurrGround.value = '';
+      elecPrevFirst.value = '';
+      elecCurrFirst.value = '';
+      elecPrevTop.value = '';
+      elecCurrTop.value = '';
+      waterBillInput.value = '';
+      waterMonthInput.value = '';
+      calculateElectricity();
+      calculateWater();
+      showToast('Inputs cleared');
+    });
+
+    // --- WhatsApp Share Generation ---
+    document.getElementById('copyElecBtn')?.addEventListener('click', () => {
+      const month = elecMonthInput.value.trim() || 'Current Month';
+      const text = 
+`⚡ *ELECTRICITY BILL (3 FLOORS)*
+🗓 Month: ${month}
+💰 Total Bill: Rs. ${formatRs(currentElecShares.totalBill, 2)}
+📊 Total Units: ${formatRs(currentElecShares.totalUnits, 1)} kWh
+💡 Rate/Unit: Rs. ${formatRs(currentElecShares.costPerUnit, 2)}
+────────────────────
+• *Ground Floor:* Rs. ${formatRs(currentElecShares.ground, 2)} (${elecUsedGround.textContent} units)
+• *1st Floor:* Rs. ${formatRs(currentElecShares.first, 2)} (${elecUsedFirst.textContent} units)
+• *Top Floor:* Rs. ${formatRs(currentElecShares.top, 2)} (${elecUsedTop.textContent} units)
+────────────────────
+Total: Rs. ${formatRs(currentElecShares.totalBill, 2)} ✓`;
+
+      copyToClipboard(text);
+    });
+
+    document.getElementById('copyWaterBtn')?.addEventListener('click', () => {
+      const month = waterMonthInput.value.trim() || 'Current Month';
+      const hasElec = currentElecShares.totalBill > 0;
+      
+      let text = 
+`💧 *WATER BILL (3 FLOORS)*
+🗓 Month: ${month}
+💰 Total Water Bill: Rs. ${formatRs(currentWaterShares.totalBill, 2)}
+👥 Equal Share (÷ 3): Rs. ${formatRs(currentWaterShares.ground, 2)} each
+────────────────────
+• *Ground Floor:* Rs. ${formatRs(currentWaterShares.ground, 2)}
+• *1st Floor:* Rs. ${formatRs(currentWaterShares.first, 2)}
+• *Top Floor:* Rs. ${formatRs(currentWaterShares.top, 2)}`;
+
+      if (hasElec) {
+        const combG = currentElecShares.ground + currentWaterShares.ground;
+        const comb1 = currentElecShares.first + currentWaterShares.first;
+        const combT = currentElecShares.top + currentWaterShares.top;
+        const grandTotal = currentElecShares.totalBill + currentWaterShares.totalBill;
+
+        text += `\n────────────────────
+📊 *COMBINED TOTAL (Elec + Water):*
+• *Ground Floor:* Rs. ${formatRs(combG, 2)}
+• *1st Floor:* Rs. ${formatRs(comb1, 2)}
+• *Top Floor:* Rs. ${formatRs(combT, 2)}
+────────────────────
+Grand Total: Rs. ${formatRs(grandTotal, 2)} ✓`;
+      }
+
+      copyToClipboard(text);
+    });
+
+    // --- History Management (LocalStorage) ---
+    const getHistory = (): HistoryEntry[] => {
+      try {
+        return JSON.parse(localStorage.getItem('floor_history_records') || '[]');
+      } catch (e) {
+        return [];
+      }
+    };
+
+    const saveHistory = (record: HistoryEntry) => {
+      const list = getHistory();
+      list.unshift(record);
+      localStorage.setItem('floor_history_records', JSON.stringify(list));
+      showToast('Saved to History!');
+    };
+
+    document.getElementById('saveElecBtn')?.addEventListener('click', () => {
+      if (currentElecShares.totalBill <= 0) {
+        showToast('Please enter a bill amount first');
+        return;
+      }
+      const record: HistoryEntry = {
+        id: 'elec_' + Date.now(),
+        type: 'Electricity',
+        month: elecMonthInput.value.trim() || 'Electricity Bill',
+        date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+        ground: currentElecShares.ground,
+        first: currentElecShares.first,
+        top: currentElecShares.top,
+        total: currentElecShares.totalBill,
+        rate: currentElecShares.costPerUnit,
+        totalUnits: currentElecShares.totalUnits
+      };
+      saveHistory(record);
+    });
+
+    document.getElementById('saveWaterBtn')?.addEventListener('click', () => {
+      if (currentWaterShares.totalBill <= 0) {
+        showToast('Please enter a water bill first');
+        return;
+      }
+      const record: HistoryEntry = {
+        id: 'water_' + Date.now(),
+        type: 'Water',
+        month: waterMonthInput.value.trim() || 'Water Bill',
+        date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+        ground: currentWaterShares.ground,
+        first: currentWaterShares.first,
+        top: currentWaterShares.top,
+        total: currentWaterShares.totalBill
+      };
+      saveHistory(record);
+    });
+
+    const renderHistory = () => {
+      const container = document.getElementById('historyListContainer');
+      const empty = document.getElementById('historyEmpty');
+      if (!container) return;
+
+      const records = getHistory();
+      if (records.length === 0) {
+        if (empty) empty.classList.remove('hidden');
+        container.innerHTML = `
+          <div class="history-empty">
+            <div class="history-empty-icon">📋</div>
+            <p>No saved records yet.</p>
+            <p class="input-sub">Tap "Save to History" in Electricity or Water after calculating.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = records.map((r) => `
+        <div class="history-item">
+          <div class="history-item-top">
+            <div>
+              <span class="history-month">${r.type}: ${r.month}</span>
+            </div>
+            <span class="history-date">${r.date}</span>
+          </div>
+          <div class="history-shares">
+            <div class="history-share-line">
+              <span>Ground Floor</span>
+              <strong>Rs. ${formatRs(r.ground, 2)}</strong>
+            </div>
+            <div class="history-share-line">
+              <span>1st Floor</span>
+              <strong>Rs. ${formatRs(r.first, 2)}</strong>
+            </div>
+            <div class="history-share-line">
+              <span>Top Floor</span>
+              <strong>Rs. ${formatRs(r.top, 2)}</strong>
+            </div>
+            <div class="history-share-line" style="margin-top: 4px; padding-top: 4px; border-top: 0.5px dashed var(--color-border);">
+              <span>Total Bill</span>
+              <strong>Rs. ${formatRs(r.total, 2)}</strong>
+            </div>
+          </div>
+          <div class="history-actions">
+            <button class="btn-secondary history-btn-sm" onclick="window.copyHistoryRecord('${r.id}')">
+              Copy
+            </button>
+            <button class="btn-secondary history-btn-sm" style="color: var(--color-danger);" onclick="window.deleteHistoryRecord('${r.id}')">
+              Delete
+            </button>
+          </div>
+        </div>
+      `).join('');
+    };
+
+    // Expose helpers to window for history action buttons
+    (window as any).copyHistoryRecord = (id: string) => {
+      const records = getHistory();
+      const r = records.find(item => item.id === id);
+      if (!r) return;
+      const text = 
+`⚡ *${r.type.toUpperCase()} BILL (${r.month})*
+🗓 Date: ${r.date}
+💰 Total Bill: Rs. ${formatRs(r.total, 2)}
+────────────────────
+• Ground Floor: Rs. ${formatRs(r.ground, 2)}
+• 1st Floor: Rs. ${formatRs(r.first, 2)}
+• Top Floor: Rs. ${formatRs(r.top, 2)}
+────────────────────
+Total: Rs. ${formatRs(r.total, 2)}`;
+      copyToClipboard(text);
+    };
+
+    (window as any).deleteHistoryRecord = (id: string) => {
+      let records = getHistory();
+      records = records.filter(item => item.id !== id);
+      localStorage.setItem('floor_history_records', JSON.stringify(records));
+      renderHistory();
+      showToast('Record deleted');
+    };
+
+    document.getElementById('clearHistoryBtn')?.addEventListener('click', () => {
+      if (confirm('Clear all saved bill records?')) {
+        localStorage.removeItem('floor_history_records');
+        renderHistory();
+        showToast('All history cleared');
+      }
+    });
+
+    // Run initial calc
+    calculateElectricity();
+    calculateWater();
+  });
+</script>
